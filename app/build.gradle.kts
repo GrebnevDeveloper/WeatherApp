@@ -18,6 +18,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val key = property("apikey")?.toString() ?: error(
+            "You need to add the api key to the file gradle.properties"
+        )
+        buildConfigField("String", "WEATHER_API_KEY", "\"$key\"")
     }
 
     buildTypes {
@@ -38,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
