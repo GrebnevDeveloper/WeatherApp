@@ -1,4 +1,4 @@
-package com.grebnev.weatherapp.ui.theme
+package com.grebnev.weatherapp.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
