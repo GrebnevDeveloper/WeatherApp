@@ -16,7 +16,7 @@ import com.grebnev.weatherapp.presentation.details.DetailsStore.State
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-internal interface DetailsStore : Store<Intent, State, Label> {
+interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
 
@@ -51,7 +51,7 @@ internal interface DetailsStore : Store<Intent, State, Label> {
     }
 }
 
-internal class DetailsStoreFactory @Inject constructor(
+class DetailsStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val changeFavouriteStateUseCase: ChangeFavouriteStateUseCase,
     private val getForecastUseCase: GetForecastUseCase,
