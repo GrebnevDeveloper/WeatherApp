@@ -37,6 +37,7 @@ mvikotlin-main = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-main", v
 mvikotlin-coroutines = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-extensions-coroutines", version.ref = "mvikotlin" }
 mvikotlin-logging = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-logging", version.ref = "mvikotlin" }
 decompose-core = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
+decompose-extensions = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
 decompose-android = { group = "com.arkivanov.decompose", name = "extensions-android", version.ref = "decompose" }
 room-core = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -50,7 +51,7 @@ glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "
 
 [bundles]
 mvikotlin = ["mvikotlin-core", "mvikotlin-main", "mvikotlin-logging", "mvikotlin-coroutines"]
-decompose = ["decompose-core", "decompose-android"]
+decompose = ["decompose-core", "decompose-extensions", "decompose-android"]
 retrofit = ["retrofit-core", "retrofit-gsonConverter"]
 
 [plugins]
