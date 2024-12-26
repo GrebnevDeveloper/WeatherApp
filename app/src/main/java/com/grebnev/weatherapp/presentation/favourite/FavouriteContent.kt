@@ -219,7 +219,7 @@ private fun SearchCard(
                 contentDescription = null
             )
             Text(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(end = 16.dp),
                 text = stringResource(R.string.text_search),
                 color = MaterialTheme.colorScheme.background,
             )
