@@ -3,4 +3,7 @@
     <string name="button_add_favourite">Add favourite</string>
     <string name="text_search">Search</string>
     <string name="text_upcoming">Upcoming</string>
+    <string name="text_enter_city_name">Введите название города</string>
+    <string name="text_nothing_found">Ничего не найдено</string>
+    <string name="text_something_went_wrong">Что-то пошло не так</string>
 </resources>
