@@ -8,9 +8,7 @@ import dagger.Provides
 
 @Module
 interface PresentationModule {
-
     companion object {
-
         @Provides
         fun provideStoreFactory(): StoreFactory = LoggingStoreFactory(DefaultStoreFactory())
     }
