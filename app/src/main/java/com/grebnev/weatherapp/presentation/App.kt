@@ -1,15 +1,7 @@
 package com.grebnev.weatherapp.presentation
 
 import android.app.Application
-import com.grebnev.weatherapp.di.ApplicationComponent
-import com.grebnev.weatherapp.di.DaggerApplicationComponent
+import dagger.hilt.android.HiltAndroidApp
 
-class App : Application() {
-
-    lateinit var applicationComponent: ApplicationComponent
-
-    override fun onCreate() {
-        super.onCreate()
-        applicationComponent = DaggerApplicationComponent.factory().create(this)
-    }
-}
+@HiltAndroidApp
+class App : Application()

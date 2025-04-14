@@ -13,27 +13,39 @@ import com.grebnev.weatherapp.domain.repository.WeatherRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 interface DataModule {
-    @[Binds ApplicationScope]
+    @Binds
+    @Singleton
     fun bindFavouriteRepository(impl: FavouriteRepositoryImpl): FavouriteRepository
 
-    @[Binds ApplicationScope]
+    @Binds
+    @Singleton
     fun bindSearchRepository(impl: SearchRepositoryImpl): SearchRepository
 
-    @[Binds ApplicationScope]
+    @Binds
+    @Singleton
     fun bindWeatherRepository(impl: WeatherRepositoryImpl): WeatherRepository
 
     companion object {
-        @[Provides ApplicationScope]
+        @Provides
+        @Singleton
         fun provideApiService() = ApiFactory.apiService
 
-        @[Provides ApplicationScope]
-        fun provideDatabase(context: Context): FavouriteCitiesDatabase =
-            FavouriteCitiesDatabase.getInstance(context)
+        @Provides
+        @Singleton
+        fun provideDatabase(
+            @ApplicationContext context: Context,
+        ): FavouriteCitiesDatabase = FavouriteCitiesDatabase.getInstance(context)
 
-        @[Provides ApplicationScope]
+        @Provides
+        @Singleton
         fun provideFavouriteCitiesDao(database: FavouriteCitiesDatabase): FavouriteCitiesDao =
             database.favouriteCitiesDao()
     }
