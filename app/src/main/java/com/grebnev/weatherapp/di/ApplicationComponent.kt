@@ -9,16 +9,16 @@ import dagger.Component
 @Component(
     modules = [
         DataModule::class,
-        PresentationModule::class
-    ]
+        PresentationModule::class,
+    ],
 )
 interface ApplicationComponent {
-
     fun inject(activity: MainActivity)
 
     @Component.Factory
     interface Factory {
-
-        fun create(@BindsInstance context: Context): ApplicationComponent
+        fun create(
+            @BindsInstance context: Context,
+        ): ApplicationComponent
     }
 }

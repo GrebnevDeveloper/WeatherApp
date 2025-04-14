@@ -30,9 +30,11 @@ interface DataModule {
         fun provideApiService() = ApiFactory.apiService
 
         @[Provides ApplicationScope]
-        fun provideDatabase(context: Context): FavouriteCitiesDatabase = FavouriteCitiesDatabase.getInstance(context)
+        fun provideDatabase(context: Context): FavouriteCitiesDatabase =
+            FavouriteCitiesDatabase.getInstance(context)
 
         @[Provides ApplicationScope]
-        fun provideFavouriteCitiesDao(database: FavouriteCitiesDatabase): FavouriteCitiesDao = database.favouriteCitiesDao()
+        fun provideFavouriteCitiesDao(database: FavouriteCitiesDatabase): FavouriteCitiesDao =
+            database.favouriteCitiesDao()
     }
 }
