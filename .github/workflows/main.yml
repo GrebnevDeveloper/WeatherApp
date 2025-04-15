@@ -26,6 +26,9 @@ jobs:
 
       - name: Create gradle.properties with API key
         run: |
+          if [ -s gradle.properties ]; then
+            echo "" >> gradle.properties
+          fi
           echo "apikey=${{ secrets.WEATHER_API_KEY }}" >> gradle.properties
 
       - name: Cache Gradle dependencies
