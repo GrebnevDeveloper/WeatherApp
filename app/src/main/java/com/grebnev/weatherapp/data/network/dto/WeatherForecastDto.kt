@@ -1,8 +1,10 @@
 package com.grebnev.weatherapp.data.network.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class WeatherForecastDto(
-    @SerializedName("current") val weatherCurrent: WeatherDto,
-    @SerializedName("forecast") val weatherForecast: ForecastDayDto,
+    @SerialName("current") val weatherCurrent: WeatherDto,
+    @SerialName("forecast") val weatherForecast: ForecastDayDto,
 )

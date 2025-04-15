@@ -1,9 +1,11 @@
 package com.grebnev.weatherapp.data.network.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CityDto(
-    @SerializedName("id") val id: Long,
-    @SerializedName("name") val name: String,
-    @SerializedName("country") val country: String
+    @SerialName("id") val id: Long,
+    @SerialName("name") val name: String,
+    @SerialName("country") val country: String,
 )
