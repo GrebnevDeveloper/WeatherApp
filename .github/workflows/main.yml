@@ -24,6 +24,10 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
+      - name: Create gradle.properties with API key
+        run: |
+          echo "apikey=${{ secrets.WEATHER_API_KEY }}" > gradle.properties
+
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
