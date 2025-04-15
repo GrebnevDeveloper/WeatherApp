@@ -79,7 +79,7 @@ dependencies {
 
     implementation(libs.bundles.mvikotlin)
     implementation(libs.bundles.decompose)
-    implementation(libs.bundles.retrofit)
+    implementation(libs.bundles.ktor)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

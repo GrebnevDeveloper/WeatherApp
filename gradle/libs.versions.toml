@@ -13,7 +13,8 @@ decompose = "3.3.0"
 ksp = "2.1.20-1.0.32"
 room = "2.7.0"
 hilt = "2.56.1"
-retrofit = "2.11.0"
+serialization = "1.8.1"
+ktor = "3.1.2"
 glide = "1.0.0-beta01"
 ktlintPlugin = "12.2.0"
 ktlint = "1.5.0"
@@ -47,8 +48,12 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 room-coroutines = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
-retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-gsonConverter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide" }
 ktlint-rules = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
 
@@ -56,7 +61,7 @@ ktlint-rules = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard
 [bundles]
 mvikotlin = ["mvikotlin-core", "mvikotlin-main", "mvikotlin-logging", "mvikotlin-coroutines"]
 decompose = ["decompose-core", "decompose-extensions", "decompose-android"]
-retrofit = ["retrofit-core", "retrofit-gsonConverter"]
+ktor = ["ktor-core", "ktor-okhttp", "ktor-negotiation", "ktor-logging", "ktor-serialization", "serialization-json"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

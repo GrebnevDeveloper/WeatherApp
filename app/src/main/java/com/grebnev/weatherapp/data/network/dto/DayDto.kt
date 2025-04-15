@@ -1,8 +1,10 @@
 package com.grebnev.weatherapp.data.network.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DayDto(
-    @SerializedName("date_epoch") val date: Long,
-    @SerializedName("day") val dayWeather: DayWeatherDto
+    @SerialName("date_epoch") val date: Long,
+    @SerialName("day") val dayWeather: DayWeatherDto,
 )

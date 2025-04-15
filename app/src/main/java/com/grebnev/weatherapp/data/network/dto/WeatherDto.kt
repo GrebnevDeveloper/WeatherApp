@@ -1,9 +1,11 @@
 package com.grebnev.weatherapp.data.network.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class WeatherDto(
-    @SerializedName("last_updated_epoch") val date: Long,
-    @SerializedName("temp_c") val tempC: Float,
-    @SerializedName("condition") val condition: ConditionDto
+    @SerialName("last_updated_epoch") val date: Long,
+    @SerialName("temp_c") val tempC: Float,
+    @SerialName("condition") val condition: ConditionDto,
 )
