@@ -1,4 +1,4 @@
-package com.grebnev.weatherapp.di
+package com.grebnev.weatherapp.di.module
 
 import android.content.Context
 import com.grebnev.weatherapp.data.database.dao.FavouriteCitiesDao

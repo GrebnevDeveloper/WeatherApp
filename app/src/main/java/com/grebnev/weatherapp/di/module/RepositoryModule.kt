@@ -1,4 +1,4 @@
-package com.grebnev.weatherapp.di
+package com.grebnev.weatherapp.di.module
 
 import com.grebnev.weatherapp.data.repository.FavouriteRepositoryImpl
 import com.grebnev.weatherapp.data.repository.SearchRepositoryImpl

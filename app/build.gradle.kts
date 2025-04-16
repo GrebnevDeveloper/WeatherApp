@@ -97,6 +97,8 @@ dependencies {
     implementation(libs.room.coroutines)
     ksp(libs.room.compiler)
 
+    implementation(libs.work.runtime)
+
     implementation(libs.glide)
     implementation(libs.icons)
 
