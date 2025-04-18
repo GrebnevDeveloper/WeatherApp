@@ -102,6 +102,8 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.icons)
 
+    implementation(libs.timber.log)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
