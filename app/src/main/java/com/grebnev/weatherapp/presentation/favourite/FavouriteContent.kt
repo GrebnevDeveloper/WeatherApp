@@ -27,16 +27,24 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,37 +58,72 @@ import com.grebnev.weatherapp.presentation.ui.theme.Orange
 
 @Composable
 fun FavouriteContent(component: FavouriteComponent) {
-
     val state by component.model.collectAsState()
 
-    LazyVerticalGrid(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 16.dp),
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item(span = { GridItemSpan(2) }) {
-            SearchCard(
-                onClick = { component.onSearchClick() }
-            )
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val hasCachedData =
+        remember(state.cityItems) {
+            state.cityItems.any { item ->
+                (item.weatherState as? FavouriteStore.State.WeatherState.Loaded)?.isDataFromCache == true
+            }
         }
-        itemsIndexed(
-            items = state.cityItems,
-            key = { _, item -> item.city.id }
-        ) { index, item ->
-            CityCard(
-                index = index,
-                cityItem = item,
-                onClick = { component.onCityItemClick(item.city) }
-            )
+
+    LaunchedEffect(hasCachedData) {
+        if (hasCachedData) {
+            val snackbarResult =
+                snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.data_from_memory),
+                    actionLabel = context.getString(R.string.retry),
+                    duration = SnackbarDuration.Indefinite,
+                )
+
+            when (snackbarResult) {
+                SnackbarResult.Dismissed -> {
+                }
+                SnackbarResult.ActionPerformed -> {
+                    component.onRetryLoadWeatherClick()
+                }
+            }
+        } else {
+            snackbarHostState.currentSnackbarData?.dismiss()
         }
-        item {
-            AddFavouriteCityCard(
-                onClick = { component.onAddToFavouriteClick() }
-            )
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { padding ->
+        LazyVerticalGrid(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = 16.dp),
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            item(span = { GridItemSpan(2) }) {
+                SearchCard(
+                    onClick = { component.onSearchClick() },
+                )
+            }
+            itemsIndexed(
+                items = state.cityItems,
+                key = { _, item -> item.city.id },
+            ) { index, item ->
+                CityCard(
+                    index = index,
+                    cityItem = item,
+                    onClick = { component.onCityItemClick(item.city) },
+                )
+            }
+            item {
+                AddFavouriteCityCard(
+                    onClick = { component.onAddToFavouriteClick() },
+                )
+            }
         }
     }
 }
@@ -90,63 +133,67 @@ fun FavouriteContent(component: FavouriteComponent) {
 private fun CityCard(
     index: Int,
     cityItem: FavouriteStore.State.CityItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val gradient = getGradientByIndex(index)
 
     Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .shadow(
-                elevation = 16.dp,
-                spotColor = gradient.shadow,
-                shape = MaterialTheme.shapes.extraLarge
-            ),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .shadow(
+                    elevation = 16.dp,
+                    spotColor = gradient.shadow,
+                    shape = MaterialTheme.shapes.extraLarge,
+                ),
         colors = CardDefaults.cardColors(containerColor = Color.Blue),
-        shape = MaterialTheme.shapes.extraLarge
+        shape = MaterialTheme.shapes.extraLarge,
     ) {
         Box(
-            modifier = Modifier
-                .background(gradient.primaryGradient)
-                .fillMaxSize()
-                .sizeIn(minHeight = 196.dp)
-                .drawBehind {
-                    drawCircle(
-                        brush = gradient.secondaryGradient,
-                        center = Offset(
-                            x = center.x - size.width / 10,
-                            y = center.y + size.height / 2
-                        ),
-                        radius = size.maxDimension / 2
-                    )
-                }
-                .padding(24.dp)
-                .clickable { onClick() }
+            modifier =
+                Modifier
+                    .background(gradient.primaryGradient)
+                    .fillMaxSize()
+                    .sizeIn(minHeight = 196.dp)
+                    .drawBehind {
+                        drawCircle(
+                            brush = gradient.secondaryGradient,
+                            center =
+                                Offset(
+                                    x = center.x - size.width / 10,
+                                    y = center.y + size.height / 2,
+                                ),
+                            radius = size.maxDimension / 2,
+                        )
+                    }.padding(24.dp)
+                    .clickable { onClick() },
         ) {
             when (val weatherState = cityItem.weatherState) {
                 FavouriteStore.State.WeatherState.Error -> {}
                 FavouriteStore.State.WeatherState.Initial -> {}
                 is FavouriteStore.State.WeatherState.Loaded -> {
                     GlideImage(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .size(56.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .size(56.dp),
                         model = weatherState.conditionIconUrl,
-                        contentDescription = null
+                        contentDescription = null,
                     )
                     Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterStart),
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterStart),
                         text = weatherState.tempC.toTempCString(),
                         color = MaterialTheme.colorScheme.background,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 46.sp)
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 46.sp),
                     )
                 }
 
                 FavouriteStore.State.WeatherState.Loading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.background
+                        color = MaterialTheme.colorScheme.background,
                     )
                 }
             }
@@ -154,69 +201,67 @@ private fun CityCard(
                 modifier = Modifier.align(Alignment.BottomStart),
                 text = cityItem.city.name,
                 color = MaterialTheme.colorScheme.background,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
             )
         }
     }
 }
 
 @Composable
-private fun AddFavouriteCityCard(
-    onClick: () -> Unit
-) {
+private fun AddFavouriteCityCard(onClick: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = MaterialTheme.shapes.extraLarge,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
     ) {
         Column(
-            modifier = Modifier
-                .sizeIn(minHeight = 196.dp)
-                .fillMaxWidth()
-                .padding(24.dp)
-                .clickable { onClick() }
+            modifier =
+                Modifier
+                    .sizeIn(minHeight = 196.dp)
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .clickable { onClick() },
         ) {
             Icon(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .size(56.dp)
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .size(56.dp)
+                        .padding(16.dp),
                 imageVector = Icons.Default.Edit,
                 tint = Orange,
-                contentDescription = null
+                contentDescription = null,
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = stringResource(R.string.button_add_favourite),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
         }
     }
 }
 
 @Composable
-private fun SearchCard(
-    onClick: () -> Unit
-) {
-
+private fun SearchCard(onClick: () -> Unit) {
     val gradient = CardGradients.gradients[3]
 
     Card(
-        shape = CircleShape
+        shape = CircleShape,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick() }
-                .background(gradient.primaryGradient),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { onClick() }
+                    .background(gradient.primaryGradient),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
                 imageVector = Icons.Default.Search,
                 tint = MaterialTheme.colorScheme.background,
-                contentDescription = null
+                contentDescription = null,
             )
             Text(
                 modifier = Modifier.padding(end = 16.dp),

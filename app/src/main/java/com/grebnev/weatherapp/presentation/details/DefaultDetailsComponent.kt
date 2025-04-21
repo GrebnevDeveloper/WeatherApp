@@ -13,47 +13,52 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class DefaultDetailsComponent @AssistedInject constructor(
-    private val detailsStoreFactory: DetailsStoreFactory,
-    @Assisted("city") private val city: City,
-    @Assisted("onBackClicked") private val onBackClicked: () -> Unit,
-    @Assisted("component") component: ComponentContext
-) : DetailsComponent, ComponentContext by component {
+class DefaultDetailsComponent
+    @AssistedInject
+    constructor(
+        private val detailsStoreFactory: DetailsStoreFactory,
+        @Assisted("city") private val city: City,
+        @Assisted("onBackClicked") private val onBackClicked: () -> Unit,
+        @Assisted("component") component: ComponentContext,
+    ) : DetailsComponent,
+        ComponentContext by component {
+        private val store = instanceKeeper.getStore { detailsStoreFactory.create(city) }
 
-    private val store = instanceKeeper.getStore { detailsStoreFactory.create(city) }
+        private val scope = componentScope()
 
-    private val scope = componentScope()
-
-    init {
-        scope.launch {
-            store.labels.collect {
-                when (it) {
-                    DetailsStore.Label.BackClicked -> {
-                        onBackClicked()
+        init {
+            scope.launch {
+                store.labels.collect {
+                    when (it) {
+                        DetailsStore.Label.BackClicked -> {
+                            onBackClicked()
+                        }
                     }
                 }
             }
         }
+
+        @OptIn(ExperimentalCoroutinesApi::class)
+        override val model: StateFlow<DetailsStore.State> = store.stateFlow
+
+        override fun onBackClick() {
+            store.accept(DetailsStore.Intent.BackClicked)
+        }
+
+        override fun onFavouriteStatusClick() {
+            store.accept(DetailsStore.Intent.FavouriteStatusClicked)
+        }
+
+        override fun onRetryLoadForecastClick() {
+            store.accept(DetailsStore.Intent.RetryLoadForecastClicked)
+        }
+
+        @AssistedFactory
+        interface Factory {
+            fun create(
+                @Assisted("city") city: City,
+                @Assisted("onBackClicked") onBackClicked: () -> Unit,
+                @Assisted("component") component: ComponentContext,
+            ): DefaultDetailsComponent
+        }
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val model: StateFlow<DetailsStore.State> = store.stateFlow
-
-    override fun onBackClick() {
-        store.accept(DetailsStore.Intent.BackClicked)
-    }
-
-    override fun onFavouriteStatusClick() {
-        store.accept(DetailsStore.Intent.FavouriteStatusClicked)
-    }
-
-    @AssistedFactory
-    interface Factory {
-
-        fun create(
-            @Assisted("city") city: City,
-            @Assisted("onBackClicked") onBackClicked: () -> Unit,
-            @Assisted("component") component: ComponentContext
-        ): DefaultDetailsComponent
-    }
-}

@@ -6,4 +6,6 @@
     <string name="text_enter_city_name">Введите название города</string>
     <string name="text_nothing_found">Ничего не найдено</string>
     <string name="text_something_went_wrong">Что-то пошло не так</string>
+    <string name="data_from_memory">Проблемы с загрузкой данных. Даные загружены из памяти.</string>
+    <string name="retry">Retry</string>
 </resources>
