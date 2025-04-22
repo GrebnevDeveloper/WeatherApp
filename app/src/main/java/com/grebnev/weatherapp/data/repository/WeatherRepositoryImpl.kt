@@ -4,6 +4,7 @@ import com.grebnev.weatherapp.core.handlers.ErrorHandler
 import com.grebnev.weatherapp.core.wrappers.ErrorType
 import com.grebnev.weatherapp.core.wrappers.ResultStatus
 import com.grebnev.weatherapp.data.database.dao.ForecastDao
+import com.grebnev.weatherapp.data.database.dao.MetadataDao
 import com.grebnev.weatherapp.data.mapper.toForecast
 import com.grebnev.weatherapp.data.mapper.toWeather
 import com.grebnev.weatherapp.data.network.api.ApiService
@@ -22,6 +23,7 @@ class WeatherRepositoryImpl
     constructor(
         private val apiService: ApiService,
         private val forecastDao: ForecastDao,
+        private val metadataDao: MetadataDao,
     ) : WeatherRepository {
         override suspend fun getWeather(cityId: Long) =
             flow {
@@ -54,6 +56,8 @@ class WeatherRepositoryImpl
 
         override suspend fun getForecastFromCache(cityId: Long): Forecast =
             forecastDao.getForecastForCity(cityId).toForecast()
+
+        override suspend fun getTimeLastUpdateForecast(): Long = metadataDao.getTimeLastUpdateForecast()
 
         companion object {
             private const val PREFIX_CITY_ID = "id:"

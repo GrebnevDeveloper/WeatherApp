@@ -14,4 +14,6 @@ interface WeatherRepository {
     suspend fun getWeatherFromCache(cityId: Long): Weather
 
     suspend fun getForecastFromCache(cityId: Long): Forecast
+
+    suspend fun getTimeLastUpdateForecast(): Long
 }

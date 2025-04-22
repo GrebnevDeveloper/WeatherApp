@@ -8,10 +8,15 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.grebnev.weatherapp.domain.entity.City
 import com.grebnev.weatherapp.domain.usecase.GetCurrentWeatherUseCase
 import com.grebnev.weatherapp.domain.usecase.GetFavouriteCitiesUseCase
+import com.grebnev.weatherapp.domain.usecase.GetTimeLastUpdateForecastUseCase
 import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.Intent
 import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.Label
 import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State
+import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State.CityItem
+import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State.WeatherState.Loaded
+import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State.WeatherState.LoadedFromCache
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 interface FavouriteStore : Store<Intent, State, Label> {
@@ -43,7 +48,12 @@ interface FavouriteStore : Store<Intent, State, Label> {
             data object Error : WeatherState
 
             data class Loaded(
-                val isDataFromCache: Boolean,
+                val tempC: Float,
+                val conditionIconUrl: String,
+            ) : WeatherState
+
+            data class LoadedFromCache(
+                val timeLastUpdate: String,
                 val tempC: Float,
                 val conditionIconUrl: String,
             ) : WeatherState
@@ -67,6 +77,7 @@ class FavouriteStoreFactory
         private val storeFactory: StoreFactory,
         private val getFavouriteCitiesUseCase: GetFavouriteCitiesUseCase,
         private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
+        private val getTimeLastUpdateForecastUseCase: GetTimeLastUpdateForecastUseCase,
     ) {
         fun create(): FavouriteStore =
             object :
@@ -91,7 +102,13 @@ class FavouriteStoreFactory
             ) : Msg
 
             data class WeatherLoaded(
-                val isDataFromCache: Boolean,
+                val cityId: Long,
+                val tempC: Float,
+                val conditionIconUrl: String,
+            ) : Msg
+
+            data class WeatherLoadedFromCache(
+                val timeLastUpdate: String,
                 val cityId: Long,
                 val tempC: Float,
                 val conditionIconUrl: String,
@@ -160,16 +177,27 @@ class FavouriteStoreFactory
                 dispatch(Msg.WeatherIsLoading(city.id))
                 try {
                     getCurrentWeatherUseCase(city.id).collect { weatherCity ->
-                        dispatch(
-                            Msg.WeatherLoaded(
-                                isDataFromCache = weatherCity.isDataFromCache,
-                                cityId = city.id,
-                                tempC = weatherCity.tempC,
-                                conditionIconUrl = weatherCity.conditionUrl,
-                            ),
-                        )
+                        if (!weatherCity.isDataFromCache) {
+                            dispatch(
+                                Msg.WeatherLoaded(
+                                    cityId = city.id,
+                                    tempC = weatherCity.tempC,
+                                    conditionIconUrl = weatherCity.conditionUrl,
+                                ),
+                            )
+                        } else {
+                            dispatch(
+                                Msg.WeatherLoadedFromCache(
+                                    timeLastUpdate = getTimeLastUpdateForecastUseCase(),
+                                    cityId = city.id,
+                                    tempC = weatherCity.tempC,
+                                    conditionIconUrl = weatherCity.conditionUrl,
+                                ),
+                            )
+                        }
                     }
-                } catch (e: Exception) {
+                } catch (exception: Exception) {
+                    Timber.e(exception, "Exception occurred in favourite store")
                     dispatch(Msg.WeatherLoadingError(city.id))
                 }
             }
@@ -182,7 +210,7 @@ class FavouriteStoreFactory
                         copy(
                             cityItems =
                                 msg.cities.map {
-                                    State.CityItem(
+                                    CityItem(
                                         city = it,
                                         weatherState = State.WeatherState.Initial,
                                     )
@@ -210,8 +238,27 @@ class FavouriteStoreFactory
                                     if (it.city.id == msg.cityId) {
                                         it.copy(
                                             weatherState =
-                                                State.WeatherState.Loaded(
-                                                    isDataFromCache = msg.isDataFromCache,
+                                                Loaded(
+                                                    tempC = msg.tempC,
+                                                    conditionIconUrl = msg.conditionIconUrl,
+                                                ),
+                                        )
+                                    } else {
+                                        it
+                                    }
+                                },
+                        )
+                    }
+
+                    is Msg.WeatherLoadedFromCache -> {
+                        copy(
+                            cityItems =
+                                cityItems.map {
+                                    if (it.city.id == msg.cityId) {
+                                        it.copy(
+                                            weatherState =
+                                                LoadedFromCache(
+                                                    timeLastUpdate = msg.timeLastUpdate,
                                                     tempC = msg.tempC,
                                                     conditionIconUrl = msg.conditionIconUrl,
                                                 ),

@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -66,25 +67,24 @@ fun FavouriteContent(component: FavouriteComponent) {
     val hasCachedData =
         remember(state.cityItems) {
             state.cityItems.any { item ->
-                (item.weatherState as? FavouriteStore.State.WeatherState.Loaded)?.isDataFromCache == true
+                item.weatherState is FavouriteStore.State.WeatherState.LoadedFromCache
             }
         }
 
     LaunchedEffect(hasCachedData) {
         if (hasCachedData) {
+            val timeLastUpdateForecast =
+                (state.cityItems[0].weatherState as FavouriteStore.State.WeatherState.LoadedFromCache)
+                    .timeLastUpdate
             val snackbarResult =
                 snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.data_from_memory),
+                    message = "${context.getString(R.string.data_from_memory)} $timeLastUpdateForecast",
                     actionLabel = context.getString(R.string.retry),
                     duration = SnackbarDuration.Indefinite,
                 )
 
-            when (snackbarResult) {
-                SnackbarResult.Dismissed -> {
-                }
-                SnackbarResult.ActionPerformed -> {
-                    component.onRetryLoadWeatherClick()
-                }
+            if (snackbarResult == SnackbarResult.ActionPerformed) {
+                component.onRetryLoadWeatherClick()
             }
         } else {
             snackbarHostState.currentSnackbarData?.dismiss()
@@ -169,7 +169,17 @@ private fun CityCard(
                     .clickable { onClick() },
         ) {
             when (val weatherState = cityItem.weatherState) {
-                FavouriteStore.State.WeatherState.Error -> {}
+                FavouriteStore.State.WeatherState.Error -> {
+                    Icon(
+                        modifier =
+                            Modifier
+                                .align(Alignment.Center)
+                                .size(70.dp),
+                        imageVector = Icons.Default.CloudOff,
+                        contentDescription = null,
+                    )
+                }
+
                 FavouriteStore.State.WeatherState.Initial -> {}
                 is FavouriteStore.State.WeatherState.Loaded -> {
                     GlideImage(
@@ -194,6 +204,25 @@ private fun CityCard(
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.background,
+                    )
+                }
+
+                is FavouriteStore.State.WeatherState.LoadedFromCache -> {
+                    GlideImage(
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .size(56.dp),
+                        model = weatherState.conditionIconUrl,
+                        contentDescription = null,
+                    )
+                    Text(
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterStart),
+                        text = weatherState.tempC.toTempCString(),
+                        color = MaterialTheme.colorScheme.background,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 46.sp),
                     )
                 }
             }

@@ -12,6 +12,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.grebnev.weatherapp.data.database.dao.FavouriteCitiesDao
 import com.grebnev.weatherapp.data.database.dao.ForecastDao
+import com.grebnev.weatherapp.data.database.dao.MetadataDao
 import com.grebnev.weatherapp.data.mapper.toForecastDbModel
 import com.grebnev.weatherapp.data.network.api.ApiService
 import kotlinx.coroutines.flow.first
@@ -24,13 +25,13 @@ class RefreshWeatherWorker(
     workerParameters: WorkerParameters,
     private val favouriteCitiesDao: FavouriteCitiesDao,
     private val forecastDao: ForecastDao,
+    private val metadataDao: MetadataDao,
     private val apiService: ApiService,
 ) : CoroutineWorker(context, workerParameters) {
     override suspend fun doWork(): Result {
         try {
-            Timber.d("RefreshWeatherWorker run")
             refreshForecast()
-            Timber.d("RefreshWeatherWorker success")
+            metadataDao.updateTimeLastUpdateForecast(time = System.currentTimeMillis())
             return Result.success()
         } catch (exception: Exception) {
             Timber.e(exception, "RefreshWeatherWorker failed")
@@ -43,7 +44,6 @@ class RefreshWeatherWorker(
             .getFavouriteCities()
             .first()
             .forEach { city ->
-                Timber.d("RefreshWeatherWorker load ${city.name}")
                 loadForecast(city.id)
             }
     }
@@ -87,6 +87,7 @@ class RefreshWeatherWorker(
         constructor(
             private val favouriteCitiesDao: FavouriteCitiesDao,
             private val forecastDao: ForecastDao,
+            private val metadataDao: MetadataDao,
             private val apiService: ApiService,
         ) : ChildWeatherWorkerFactory {
             override fun create(
@@ -98,6 +99,7 @@ class RefreshWeatherWorker(
                     workerParameters = workerParameters,
                     favouriteCitiesDao = favouriteCitiesDao,
                     forecastDao = forecastDao,
+                    metadataDao = metadataDao,
                     apiService = apiService,
                 )
         }

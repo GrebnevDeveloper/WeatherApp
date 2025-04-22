@@ -76,7 +76,6 @@ fun ForecastDbModel.toForecast(): Forecast =
         currentWeather = currentWeather.toWeather(),
         upcoming =
             upcoming
-                .drop(1) // we skip the first day of weather because this is the current weather
                 .map { weatherDbModel ->
                     weatherDbModel.toWeather()
                 },

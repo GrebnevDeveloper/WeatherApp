@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
@@ -68,26 +69,22 @@ fun DetailsContent(component: DetailsComponent) {
 
     val hasCachedData =
         remember(state.forecastState) {
-            (state.forecastState as? DetailsStore.State.ForecastState.Loaded)
-                ?.forecast
-                ?.isDataFromCache == true
+            state.forecastState is DetailsStore.State.ForecastState.LoadedFromCache
         }
 
     LaunchedEffect(hasCachedData) {
         if (hasCachedData) {
+            val timeLastUpdate =
+                (state.forecastState as DetailsStore.State.ForecastState.LoadedFromCache).timeLastUpdate
             val snackbarResult =
                 snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.data_from_memory),
+                    message = "${context.getString(R.string.data_from_memory)} $timeLastUpdate",
                     actionLabel = context.getString(R.string.retry),
                     duration = SnackbarDuration.Indefinite,
                 )
 
-            when (snackbarResult) {
-                SnackbarResult.Dismissed -> {
-                }
-                SnackbarResult.ActionPerformed -> {
-                    component.onRetryLoadForecastClick()
-                }
+            if (snackbarResult == SnackbarResult.ActionPerformed) {
+                component.onRetryLoadForecastClick()
             }
         } else {
             snackbarHostState.currentSnackbarData?.dismiss()
@@ -132,6 +129,10 @@ fun DetailsContent(component: DetailsComponent) {
                 DetailsStore.State.ForecastState.Loading -> {
                     Loading()
                 }
+
+                is DetailsStore.State.ForecastState.LoadedFromCache -> {
+                    Loaded(forecastState.forecast)
+                }
             }
         }
     }
@@ -139,6 +140,16 @@ fun DetailsContent(component: DetailsComponent) {
 
 @Composable
 private fun Error() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Icon(
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .size(70.dp),
+            imageVector = Icons.Default.CloudOff,
+            contentDescription = null,
+        )
+    }
 }
 
 @Composable

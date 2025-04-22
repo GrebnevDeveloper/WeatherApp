@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import com.grebnev.weatherapp.data.database.converter.WeatherConverter
 import com.grebnev.weatherapp.data.database.model.CityDbModel
 import com.grebnev.weatherapp.data.database.model.ForecastDbModel
+import com.grebnev.weatherapp.data.database.model.MetadataDbModel
 import com.grebnev.weatherapp.data.database.model.WeatherDbModel
 
 @Database(
@@ -15,6 +16,7 @@ import com.grebnev.weatherapp.data.database.model.WeatherDbModel
         CityDbModel::class,
         WeatherDbModel::class,
         ForecastDbModel::class,
+        MetadataDbModel::class,
     ],
     version = 1,
     exportSchema = false,
@@ -24,6 +26,8 @@ abstract class WeatherFavouriteCitiesDatabase : RoomDatabase() {
     abstract fun favouriteCitiesDao(): FavouriteCitiesDao
 
     abstract fun forecastCitiesDao(): ForecastDao
+
+    abstract fun metadataDao(): MetadataDao
 
     companion object {
         private const val DATABASE_NAME = "weatherFavouriteCitiesDatabase"

@@ -9,11 +9,13 @@ import com.grebnev.weatherapp.domain.entity.City
 import com.grebnev.weatherapp.domain.entity.Forecast
 import com.grebnev.weatherapp.domain.usecase.ChangeFavouriteStateUseCase
 import com.grebnev.weatherapp.domain.usecase.GetForecastUseCase
+import com.grebnev.weatherapp.domain.usecase.GetTimeLastUpdateForecastUseCase
 import com.grebnev.weatherapp.domain.usecase.ObserveFavouriteStateUseCase
 import com.grebnev.weatherapp.presentation.details.DetailsStore.Intent
 import com.grebnev.weatherapp.presentation.details.DetailsStore.Label
 import com.grebnev.weatherapp.presentation.details.DetailsStore.State
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 interface DetailsStore : Store<Intent, State, Label> {
@@ -40,6 +42,11 @@ interface DetailsStore : Store<Intent, State, Label> {
             data class Loaded(
                 val forecast: Forecast,
             ) : ForecastState
+
+            data class LoadedFromCache(
+                val timeLastUpdate: String,
+                val forecast: Forecast,
+            ) : ForecastState
         }
     }
 
@@ -55,6 +62,7 @@ class DetailsStoreFactory
         private val changeFavouriteStateUseCase: ChangeFavouriteStateUseCase,
         private val getForecastUseCase: GetForecastUseCase,
         private val observeFavouriteStateUseCase: ObserveFavouriteStateUseCase,
+        private val getTimeLastUpdateForecastUseCase: GetTimeLastUpdateForecastUseCase,
     ) {
         fun create(city: City): DetailsStore =
             object :
@@ -84,6 +92,11 @@ class DetailsStoreFactory
                 val forecast: Forecast,
             ) : Action
 
+            data class ForecastLoadedFromCache(
+                val timeLastUpdate: String,
+                val forecast: Forecast,
+            ) : Action
+
             data object ForecastLoading : Action
 
             data object ForecastLoadingError : Action
@@ -95,6 +108,11 @@ class DetailsStoreFactory
             ) : Msg
 
             data class ForecastLoaded(
+                val forecast: Forecast,
+            ) : Msg
+
+            data class ForecastLoadedFromCache(
+                val timeLastUpdate: String,
                 val forecast: Forecast,
             ) : Msg
 
@@ -116,9 +134,19 @@ class DetailsStoreFactory
                     dispatch(Action.ForecastLoading)
                     try {
                         getForecastUseCase(city.id).collect { forecastCity ->
-                            dispatch(Action.ForecastLoaded(forecastCity))
+                            if (!forecastCity.isDataFromCache) {
+                                dispatch(Action.ForecastLoaded(forecastCity))
+                            } else {
+                                dispatch(
+                                    Action.ForecastLoadedFromCache(
+                                        timeLastUpdate = getTimeLastUpdateForecastUseCase(),
+                                        forecast = forecastCity,
+                                    ),
+                                )
+                            }
                         }
-                    } catch (e: Exception) {
+                    } catch (exception: Exception) {
+                        Timber.e(exception, "Exception occurred in details store")
                         dispatch(Action.ForecastLoadingError)
                     }
                 }
@@ -151,7 +179,8 @@ class DetailsStoreFactory
                                 getForecastUseCase(state.city.id).collect { forecastCity ->
                                     dispatch(Msg.ForecastLoaded(forecastCity))
                                 }
-                            } catch (e: Exception) {
+                            } catch (exception: Exception) {
+                                Timber.e(exception, "Exception occurred in retry load forecast")
                                 dispatch(Msg.ForecastLoadingError)
                             }
                         }
@@ -167,6 +196,15 @@ class DetailsStoreFactory
 
                     is Action.ForecastLoaded -> {
                         dispatch(Msg.ForecastLoaded(action.forecast))
+                    }
+
+                    is Action.ForecastLoadedFromCache -> {
+                        dispatch(
+                            Msg.ForecastLoadedFromCache(
+                                timeLastUpdate = action.timeLastUpdate,
+                                forecast = action.forecast,
+                            ),
+                        )
                     }
 
                     Action.ForecastLoading -> {
@@ -189,6 +227,16 @@ class DetailsStoreFactory
 
                     is Msg.ForecastLoaded -> {
                         copy(forecastState = State.ForecastState.Loaded(msg.forecast))
+                    }
+
+                    is Msg.ForecastLoadedFromCache -> {
+                        copy(
+                            forecastState =
+                                State.ForecastState.LoadedFromCache(
+                                    timeLastUpdate = msg.timeLastUpdate,
+                                    forecast = msg.forecast,
+                                ),
+                        )
                     }
 
                     Msg.ForecastLoading -> {
