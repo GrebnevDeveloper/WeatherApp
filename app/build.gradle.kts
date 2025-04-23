@@ -97,8 +97,12 @@ dependencies {
     implementation(libs.room.coroutines)
     ksp(libs.room.compiler)
 
+    implementation(libs.work.runtime)
+
     implementation(libs.glide)
     implementation(libs.icons)
+
+    implementation(libs.timber.log)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

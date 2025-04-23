@@ -3,8 +3,9 @@ package com.grebnev.weatherapp.domain.entity
 import java.util.Calendar
 
 data class Weather(
+    val isDataFromCache: Boolean = false,
     val tempC: Float,
     val conditionText: String,
     val conditionUrl: String,
-    val date: Calendar
+    val date: Calendar,
 )

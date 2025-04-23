@@ -1,8 +1,10 @@
-package com.grebnev.weatherapp.di
+package com.grebnev.weatherapp.di.module
 
 import android.content.Context
 import com.grebnev.weatherapp.data.database.dao.FavouriteCitiesDao
-import com.grebnev.weatherapp.data.database.dao.FavouriteCitiesDatabase
+import com.grebnev.weatherapp.data.database.dao.ForecastDao
+import com.grebnev.weatherapp.data.database.dao.MetadataDao
+import com.grebnev.weatherapp.data.database.dao.WeatherFavouriteCitiesDatabase
 import com.grebnev.weatherapp.data.network.api.ApiFactory
 import com.grebnev.weatherapp.data.network.api.ApiService
 import com.grebnev.weatherapp.data.network.api.ApiServiceImpl
@@ -29,10 +31,19 @@ object DataModule {
     @Singleton
     fun provideDatabase(
         @ApplicationContext context: Context,
-    ): FavouriteCitiesDatabase = FavouriteCitiesDatabase.getInstance(context)
+    ): WeatherFavouriteCitiesDatabase = WeatherFavouriteCitiesDatabase.getInstance(context)
 
     @Provides
     @Singleton
-    fun provideFavouriteCitiesDao(database: FavouriteCitiesDatabase): FavouriteCitiesDao =
+    fun provideFavouriteCitiesDao(database: WeatherFavouriteCitiesDatabase): FavouriteCitiesDao =
         database.favouriteCitiesDao()
+
+    @Provides
+    @Singleton
+    fun provideForecastDao(database: WeatherFavouriteCitiesDatabase): ForecastDao =
+        database.forecastCitiesDao()
+
+    @Provides
+    @Singleton
+    fun provideMetadataDao(database: WeatherFavouriteCitiesDatabase): MetadataDao = database.metadataDao()
 }

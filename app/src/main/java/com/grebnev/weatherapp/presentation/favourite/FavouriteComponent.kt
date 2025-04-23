@@ -4,7 +4,6 @@ import com.grebnev.weatherapp.domain.entity.City
 import kotlinx.coroutines.flow.StateFlow
 
 interface FavouriteComponent {
-
     val model: StateFlow<FavouriteStore.State>
 
     fun onSearchClick()
@@ -12,4 +11,6 @@ interface FavouriteComponent {
     fun onAddToFavouriteClick()
 
     fun onCityItemClick(city: City)
+
+    fun onRetryLoadWeatherClick()
 }

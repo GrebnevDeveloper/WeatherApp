@@ -1,4 +1,4 @@
-package com.grebnev.weatherapp.di
+package com.grebnev.weatherapp.di.module
 
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.logging.store.LoggingStoreFactory
