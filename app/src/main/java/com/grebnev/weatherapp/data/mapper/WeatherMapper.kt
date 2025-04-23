@@ -37,8 +37,9 @@ fun WeatherForecastDto.toForecast(): Forecast =
                 },
     )
 
-fun WeatherDto.toWeatherDbModel(): WeatherDbModel =
+fun WeatherDto.toWeatherDbModel(cityId: Long): WeatherDbModel =
     WeatherDbModel(
+        forecastCityId = cityId,
         tempC = tempC,
         conditionText = condition.text,
         conditionUrl = condition.iconUrl.correctionIconUrl(),
@@ -48,13 +49,14 @@ fun WeatherDto.toWeatherDbModel(): WeatherDbModel =
 fun WeatherForecastDto.toForecastDbModel(cityId: Long): ForecastDbModel =
     ForecastDbModel(
         cityId = cityId,
-        currentWeather = weatherCurrent.toWeatherDbModel(),
+        currentWeather = weatherCurrent.toWeatherDbModel(cityId),
         upcoming =
             weatherForecast.forecastDays
                 .drop(1) // we skip the first day of weather because this is the current weather
                 .map { dayDto ->
                     val dayWeatherDto = dayDto.dayWeather
                     WeatherDbModel(
+                        forecastCityId = cityId,
                         tempC = dayWeatherDto.tempC,
                         conditionText = dayWeatherDto.condition.text,
                         conditionUrl = dayWeatherDto.condition.iconUrl.correctionIconUrl(),
