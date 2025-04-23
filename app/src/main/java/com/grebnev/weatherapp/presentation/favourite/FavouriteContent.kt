@@ -29,15 +29,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +51,8 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.grebnev.weatherapp.R
+import com.grebnev.weatherapp.presentation.base.SnackbarState
+import com.grebnev.weatherapp.presentation.base.actionSnackbar
 import com.grebnev.weatherapp.presentation.extensions.toTempCString
 import com.grebnev.weatherapp.presentation.ui.theme.CardGradients
 import com.grebnev.weatherapp.presentation.ui.theme.Gradient
@@ -63,31 +64,42 @@ fun FavouriteContent(component: FavouriteComponent) {
 
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarState = remember { mutableStateOf(SnackbarState.HIDDEN) }
 
-    val hasCachedData =
-        remember(state.cityItems) {
-            state.cityItems.any { item ->
-                item.weatherState is FavouriteStore.State.WeatherState.LoadedFromCache
-            }
+    LaunchedEffect(state.cityItems) {
+        if (state.timeLastUpdate != null) {
+            snackbarState.value = SnackbarState.SHOW_CACHE
+            return@LaunchedEffect
         }
+        state.cityItems.forEach {
+            snackbarState.value =
+                when (it.weatherState) {
+                    FavouriteStore.State.WeatherState.Error -> {
+                        SnackbarState.SHOW_ERROR
+                        return@forEach
+                    }
+                    else -> SnackbarState.HIDDEN
+                }
+        }
+    }
 
-    LaunchedEffect(hasCachedData) {
-        if (hasCachedData) {
-            val timeLastUpdateForecast =
-                (state.cityItems[0].weatherState as FavouriteStore.State.WeatherState.LoadedFromCache)
-                    .timeLastUpdate
-            val snackbarResult =
-                snackbarHostState.showSnackbar(
-                    message = "${context.getString(R.string.data_from_memory)} $timeLastUpdateForecast",
-                    actionLabel = context.getString(R.string.retry),
-                    duration = SnackbarDuration.Indefinite,
+    LaunchedEffect(snackbarState.value) {
+        when (snackbarState.value) {
+            SnackbarState.SHOW_CACHE ->
+                actionSnackbar(
+                    snackbarHostState = snackbarHostState,
+                    context = context,
+                    message = "${context.getString(R.string.data_from_memory)} ${state.timeLastUpdate}",
+                    action = component::onRetryLoadWeatherClick,
                 )
-
-            if (snackbarResult == SnackbarResult.ActionPerformed) {
-                component.onRetryLoadWeatherClick()
-            }
-        } else {
-            snackbarHostState.currentSnackbarData?.dismiss()
+            SnackbarState.SHOW_ERROR ->
+                actionSnackbar(
+                    snackbarHostState = snackbarHostState,
+                    context = context,
+                    message = context.getString(R.string.error_load_data),
+                    action = component::onRetryLoadWeatherClick,
+                )
+            SnackbarState.HIDDEN -> snackbarHostState.currentSnackbarData?.dismiss()
         }
     }
 
@@ -204,25 +216,6 @@ private fun CityCard(
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.background,
-                    )
-                }
-
-                is FavouriteStore.State.WeatherState.LoadedFromCache -> {
-                    GlideImage(
-                        modifier =
-                            Modifier
-                                .align(Alignment.TopEnd)
-                                .size(56.dp),
-                        model = weatherState.conditionIconUrl,
-                        contentDescription = null,
-                    )
-                    Text(
-                        modifier =
-                            Modifier
-                                .align(Alignment.CenterStart),
-                        text = weatherState.tempC.toTempCString(),
-                        color = MaterialTheme.colorScheme.background,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 46.sp),
                     )
                 }
             }

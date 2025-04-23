@@ -31,16 +31,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +54,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.grebnev.weatherapp.R
 import com.grebnev.weatherapp.domain.entity.Forecast
 import com.grebnev.weatherapp.domain.entity.Weather
+import com.grebnev.weatherapp.presentation.base.SnackbarState
+import com.grebnev.weatherapp.presentation.base.actionSnackbar
 import com.grebnev.weatherapp.presentation.extensions.formattedFullDate
 import com.grebnev.weatherapp.presentation.extensions.formattedShortDayOfWeek
 import com.grebnev.weatherapp.presentation.extensions.toTempCString
@@ -66,28 +67,37 @@ fun DetailsContent(component: DetailsComponent) {
 
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarState = remember { mutableStateOf(SnackbarState.HIDDEN) }
 
-    val hasCachedData =
-        remember(state.forecastState) {
-            state.forecastState is DetailsStore.State.ForecastState.LoadedFromCache
-        }
-
-    LaunchedEffect(hasCachedData) {
-        if (hasCachedData) {
-            val timeLastUpdate =
-                (state.forecastState as DetailsStore.State.ForecastState.LoadedFromCache).timeLastUpdate
-            val snackbarResult =
-                snackbarHostState.showSnackbar(
-                    message = "${context.getString(R.string.data_from_memory)} $timeLastUpdate",
-                    actionLabel = context.getString(R.string.retry),
-                    duration = SnackbarDuration.Indefinite,
-                )
-
-            if (snackbarResult == SnackbarResult.ActionPerformed) {
-                component.onRetryLoadForecastClick()
+    LaunchedEffect(state.forecastState) {
+        snackbarState.value =
+            when (state.forecastState) {
+                is DetailsStore.State.ForecastState.LoadedFromCache -> SnackbarState.SHOW_CACHE
+                DetailsStore.State.ForecastState.Error -> SnackbarState.SHOW_ERROR
+                else -> SnackbarState.HIDDEN
             }
-        } else {
-            snackbarHostState.currentSnackbarData?.dismiss()
+    }
+
+    LaunchedEffect(snackbarState.value) {
+        when (snackbarState.value) {
+            SnackbarState.SHOW_CACHE -> {
+                val timeLastUpdate =
+                    (state.forecastState as DetailsStore.State.ForecastState.LoadedFromCache).timeLastUpdate
+                actionSnackbar(
+                    snackbarHostState = snackbarHostState,
+                    context = context,
+                    message = "${context.getString(R.string.data_from_memory)} $timeLastUpdate",
+                    action = component::onRetryLoadForecastClick,
+                )
+            }
+            SnackbarState.SHOW_ERROR ->
+                actionSnackbar(
+                    snackbarHostState = snackbarHostState,
+                    context = context,
+                    message = context.getString(R.string.error_load_data),
+                    action = component::onRetryLoadForecastClick,
+                )
+            SnackbarState.HIDDEN -> snackbarHostState.currentSnackbarData?.dismiss()
         }
     }
 

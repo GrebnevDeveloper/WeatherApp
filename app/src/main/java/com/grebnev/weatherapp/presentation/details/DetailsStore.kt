@@ -177,7 +177,16 @@ class DetailsStoreFactory
                                 dispatch(Msg.ForecastLoading)
                                 val state = state()
                                 getForecastUseCase(state.city.id).collect { forecastCity ->
-                                    dispatch(Msg.ForecastLoaded(forecastCity))
+                                    if (!forecastCity.isDataFromCache) {
+                                        dispatch(Msg.ForecastLoaded(forecastCity))
+                                    } else {
+                                        dispatch(
+                                            Msg.ForecastLoadedFromCache(
+                                                timeLastUpdate = getTimeLastUpdateForecastUseCase(),
+                                                forecast = forecastCity,
+                                            ),
+                                        )
+                                    }
                                 }
                             } catch (exception: Exception) {
                                 Timber.e(exception, "Exception occurred in retry load forecast")

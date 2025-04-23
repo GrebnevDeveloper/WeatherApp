@@ -14,7 +14,6 @@ import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.Label
 import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State
 import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State.CityItem
 import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State.WeatherState.Loaded
-import com.grebnev.weatherapp.presentation.favourite.FavouriteStore.State.WeatherState.LoadedFromCache
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -34,6 +33,7 @@ interface FavouriteStore : Store<Intent, State, Label> {
 
     data class State(
         val cityItems: List<CityItem>,
+        val timeLastUpdate: String? = null,
     ) {
         data class CityItem(
             val city: City,
@@ -48,12 +48,6 @@ interface FavouriteStore : Store<Intent, State, Label> {
             data object Error : WeatherState
 
             data class Loaded(
-                val tempC: Float,
-                val conditionIconUrl: String,
-            ) : WeatherState
-
-            data class LoadedFromCache(
-                val timeLastUpdate: String,
                 val tempC: Float,
                 val conditionIconUrl: String,
             ) : WeatherState
@@ -220,6 +214,7 @@ class FavouriteStoreFactory
 
                     is Msg.WeatherIsLoading -> {
                         copy(
+                            timeLastUpdate = null,
                             cityItems =
                                 cityItems.map {
                                     if (it.city.id == msg.cityId) {
@@ -252,13 +247,13 @@ class FavouriteStoreFactory
 
                     is Msg.WeatherLoadedFromCache -> {
                         copy(
+                            timeLastUpdate = msg.timeLastUpdate,
                             cityItems =
                                 cityItems.map {
                                     if (it.city.id == msg.cityId) {
                                         it.copy(
                                             weatherState =
-                                                LoadedFromCache(
-                                                    timeLastUpdate = msg.timeLastUpdate,
+                                                Loaded(
                                                     tempC = msg.tempC,
                                                     conditionIconUrl = msg.conditionIconUrl,
                                                 ),
