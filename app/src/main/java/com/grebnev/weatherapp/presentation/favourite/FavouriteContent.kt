@@ -110,7 +110,8 @@ fun FavouriteContent(component: FavouriteComponent) {
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(top = 16.dp),
+                    .background(MaterialTheme.colorScheme.onPrimary)
+                    .padding(top = 25.dp),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -248,7 +249,7 @@ private fun AddFavouriteCityCard(onClick: () -> Unit) {
                 modifier =
                     Modifier
                         .align(Alignment.CenterHorizontally)
-                        .size(56.dp)
+                        .size(75.dp)
                         .padding(16.dp),
                 imageVector = Icons.Default.Edit,
                 tint = Orange,
