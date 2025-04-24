@@ -19,7 +19,7 @@
             android:name=".presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.WeatherApp">
+            android:theme="@style/Theme.WeatherApp.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
