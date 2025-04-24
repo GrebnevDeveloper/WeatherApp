@@ -104,6 +104,8 @@ dependencies {
 
     implementation(libs.timber.log)
 
+    implementation(libs.androidx.splash)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

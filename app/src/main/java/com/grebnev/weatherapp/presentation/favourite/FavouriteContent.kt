@@ -110,7 +110,8 @@ fun FavouriteContent(component: FavouriteComponent) {
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(top = 16.dp),
+                    .background(MaterialTheme.colorScheme.onPrimary)
+                    .padding(top = 25.dp),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -177,7 +178,7 @@ private fun CityCard(
                                 ),
                             radius = size.maxDimension / 2,
                         )
-                    }.padding(24.dp)
+                    }.padding(20.dp)
                     .clickable { onClick() },
         ) {
             when (val weatherState = cityItem.weatherState) {
@@ -248,7 +249,7 @@ private fun AddFavouriteCityCard(onClick: () -> Unit) {
                 modifier =
                     Modifier
                         .align(Alignment.CenterHorizontally)
-                        .size(56.dp)
+                        .size(75.dp)
                         .padding(16.dp),
                 imageVector = Icons.Default.Edit,
                 tint = Orange,
@@ -257,7 +258,7 @@ private fun AddFavouriteCityCard(onClick: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(R.string.button_add_favourite),
+                text = stringResource(R.string.add_favourite),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -287,7 +288,7 @@ private fun SearchCard(onClick: () -> Unit) {
             )
             Text(
                 modifier = Modifier.padding(end = 16.dp),
-                text = stringResource(R.string.text_search),
+                text = stringResource(R.string.search),
                 color = MaterialTheme.colorScheme.background,
             )
         }

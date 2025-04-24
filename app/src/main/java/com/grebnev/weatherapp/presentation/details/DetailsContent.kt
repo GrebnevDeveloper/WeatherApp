@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +61,7 @@ import com.grebnev.weatherapp.presentation.extensions.formattedFullDate
 import com.grebnev.weatherapp.presentation.extensions.formattedShortDayOfWeek
 import com.grebnev.weatherapp.presentation.extensions.toTempCString
 import com.grebnev.weatherapp.presentation.ui.theme.CardGradients
+import com.grebnev.weatherapp.presentation.ui.theme.Gradient
 
 @Composable
 fun DetailsContent(component: DetailsComponent) {
@@ -108,7 +110,7 @@ fun DetailsContent(component: DetailsComponent) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(CardGradients.gradients[(0..4).random()].primaryGradient),
+                .background(getGradientByCityId(state.city.id.toInt()).primaryGradient),
         topBar = {
             TopBar(
                 cityName = state.city.name,
@@ -180,13 +182,16 @@ private fun Loading() {
 @Composable
 private fun Loaded(forecast: Forecast) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = forecast.currentWeather.conditionText,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -256,7 +261,7 @@ private fun UpcomingWeather(upcoming: List<Weather>) {
         ) {
             Text(
                 modifier = Modifier.padding(bottom = 16.dp),
-                text = stringResource(R.string.text_upcoming),
+                text = stringResource(R.string.upcoming),
                 style = MaterialTheme.typography.titleMedium,
             )
             Row(
@@ -344,4 +349,9 @@ private fun TopBar(
             }
         },
     )
+}
+
+private fun getGradientByCityId(cityId: Int): Gradient {
+    val gradients = CardGradients.gradients
+    return gradients[cityId % gradients.size]
 }

@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Weather App</string>
-    <string name="button_add_favourite">Add favourite</string>
-    <string name="text_search">Search</string>
-    <string name="text_upcoming">Upcoming</string>
-    <string name="text_enter_city_name">Введите название города</string>
-    <string name="text_nothing_found">Ничего не найдено</string>
-    <string name="text_something_went_wrong">Что-то пошло не так</string>
-    <string name="data_from_memory">Проблемы с загрузкой данных. Даные загружены из памяти.</string>
+    <string name="add_favourite">Add favourite</string>
+    <string name="search">Search</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="enter_city_name">Enter city name</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="error_search">An error occurred. Please repeat your search.</string>
+    <string name="data_from_memory">Problem loading data. Last update:</string>
     <string name="retry">Retry</string>
-    <string name="error_load_data">Возникла ошибка при загрузке данных</string>
+    <string name="error_load_data">Error loading data.</string>
 </resources>
