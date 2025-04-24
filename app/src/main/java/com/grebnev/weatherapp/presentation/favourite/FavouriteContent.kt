@@ -72,14 +72,12 @@ fun FavouriteContent(component: FavouriteComponent) {
             return@LaunchedEffect
         }
         state.cityItems.forEach {
-            snackbarState.value =
-                when (it.weatherState) {
-                    FavouriteStore.State.WeatherState.Error -> {
-                        SnackbarState.SHOW_ERROR
-                        return@forEach
-                    }
-                    else -> SnackbarState.HIDDEN
-                }
+            if (it.weatherState is FavouriteStore.State.WeatherState.Error) {
+                snackbarState.value = SnackbarState.SHOW_ERROR
+                return@LaunchedEffect
+            } else {
+                snackbarState.value = SnackbarState.HIDDEN
+            }
         }
     }
 
