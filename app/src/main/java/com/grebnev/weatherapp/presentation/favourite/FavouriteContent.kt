@@ -177,7 +177,7 @@ private fun CityCard(
                                 ),
                             radius = size.maxDimension / 2,
                         )
-                    }.padding(24.dp)
+                    }.padding(20.dp)
                     .clickable { onClick() },
         ) {
             when (val weatherState = cityItem.weatherState) {
