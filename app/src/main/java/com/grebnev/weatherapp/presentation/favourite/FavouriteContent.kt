@@ -257,7 +257,7 @@ private fun AddFavouriteCityCard(onClick: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(R.string.button_add_favourite),
+                text = stringResource(R.string.add_favourite),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -287,7 +287,7 @@ private fun SearchCard(onClick: () -> Unit) {
             )
             Text(
                 modifier = Modifier.padding(end = 16.dp),
-                text = stringResource(R.string.text_search),
+                text = stringResource(R.string.search),
                 color = MaterialTheme.colorScheme.background,
             )
         }

@@ -257,7 +257,7 @@ private fun UpcomingWeather(upcoming: List<Weather>) {
         ) {
             Text(
                 modifier = Modifier.padding(bottom = 16.dp),
-                text = stringResource(R.string.text_upcoming),
+                text = stringResource(R.string.upcoming),
                 style = MaterialTheme.typography.titleMedium,
             )
             Row(

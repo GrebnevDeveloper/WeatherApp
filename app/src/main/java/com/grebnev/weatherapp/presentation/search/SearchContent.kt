@@ -45,9 +45,10 @@ import com.grebnev.weatherapp.domain.entity.City
 @Composable
 fun SearchContent(component: SearchComponent) {
     val state by component.model.collectAsState()
-    val focusRequester = remember {
-        FocusRequester()
-    }
+    val focusRequester =
+        remember {
+            FocusRequester()
+        }
 
     var expanded by rememberSaveable {
         mutableStateOf(false)
@@ -66,12 +67,12 @@ fun SearchContent(component: SearchComponent) {
                 onSearch = { component.onSearchClick() },
                 expanded = expanded,
                 onExpandedChange = { expanded = it },
-                placeholder = { Text(text = stringResource(R.string.text_enter_city_name)) },
+                placeholder = { Text(text = stringResource(R.string.enter_city_name)) },
                 leadingIcon = {
                     IconButton(onClick = { component.onBackClick() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
                 },
@@ -79,10 +80,10 @@ fun SearchContent(component: SearchComponent) {
                     IconButton(onClick = { component.onSearchClick() }) {
                         Icon(
                             imageVector = Icons.Default.Search,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
-                }
+                },
             )
         },
         expanded = expanded,
@@ -90,22 +91,21 @@ fun SearchContent(component: SearchComponent) {
     ) {
         when (val searchState = state.searchState) {
             SearchStore.State.SearchState.EmptyResult -> {
-                Text(text = stringResource(R.string.text_nothing_found))
+                Text(text = stringResource(R.string.nothing_found))
             }
 
             SearchStore.State.SearchState.Error -> {
-                Text(text = stringResource(R.string.text_something_went_wrong))
+                Text(text = stringResource(R.string.error_search))
             }
 
             SearchStore.State.SearchState.Initial -> {
-
             }
 
             SearchStore.State.SearchState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 }
             }
@@ -114,15 +114,15 @@ fun SearchContent(component: SearchComponent) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(16.dp)
+                    contentPadding = PaddingValues(16.dp),
                 ) {
                     items(
                         items = searchState.cities,
-                        key = { it.id }
+                        key = { it.id },
                     ) { city ->
                         CityCard(
                             city = city,
-                            onCityClick = { component.onCityClick(it) }
+                            onCityClick = { component.onCityClick(it) },
                         )
                     }
                 }
@@ -134,20 +134,21 @@ fun SearchContent(component: SearchComponent) {
 @Composable
 private fun CityCard(
     city: City,
-    onCityClick: (City) -> Unit
+    onCityClick: (City) -> Unit,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-                .clickable { onCityClick(city) }
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .clickable { onCityClick(city) },
         ) {
             Text(
                 text = city.name,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = city.country)
