@@ -91,11 +91,19 @@ fun SearchContent(component: SearchComponent) {
     ) {
         when (val searchState = state.searchState) {
             SearchStore.State.SearchState.EmptyResult -> {
-                Text(text = stringResource(R.string.nothing_found))
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = stringResource(R.string.nothing_found),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.error),
+                )
             }
 
             SearchStore.State.SearchState.Error -> {
-                Text(text = stringResource(R.string.error_search))
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = stringResource(R.string.error_search),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.error),
+                )
             }
 
             SearchStore.State.SearchState.Initial -> {
