@@ -60,6 +60,7 @@ import com.grebnev.weatherapp.presentation.extensions.formattedFullDate
 import com.grebnev.weatherapp.presentation.extensions.formattedShortDayOfWeek
 import com.grebnev.weatherapp.presentation.extensions.toTempCString
 import com.grebnev.weatherapp.presentation.ui.theme.CardGradients
+import com.grebnev.weatherapp.presentation.ui.theme.Gradient
 
 @Composable
 fun DetailsContent(component: DetailsComponent) {
@@ -108,7 +109,7 @@ fun DetailsContent(component: DetailsComponent) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(CardGradients.gradients[(0..4).random()].primaryGradient),
+                .background(getGradientByCityId(state.city.id.toInt()).primaryGradient),
         topBar = {
             TopBar(
                 cityName = state.city.name,
@@ -344,4 +345,9 @@ private fun TopBar(
             }
         },
     )
+}
+
+private fun getGradientByCityId(cityId: Int): Gradient {
+    val gradients = CardGradients.gradients
+    return gradients[cityId % gradients.size]
 }
