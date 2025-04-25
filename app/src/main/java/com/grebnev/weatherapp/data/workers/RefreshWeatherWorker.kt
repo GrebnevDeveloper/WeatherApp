@@ -55,7 +55,7 @@ class RefreshWeatherWorker(
 
     companion object {
         private const val REFRESH_WEATHER_WORKER_NAME = "refresh_weather_worker"
-        private const val REFRESH_TIMEOUT_MINUTES = 15L
+        private const val REFRESH_TIMEOUT_MINUTES = 60L
         private const val PREFIX_CITY_ID = "id:"
 
         private val constraints =
