@@ -1,5 +1,6 @@
 package com.grebnev.weatherapp.presentation.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,72 +59,93 @@ fun SearchContent(component: SearchComponent) {
         focusRequester.requestFocus()
     }
 
-    SearchBar(
-        modifier = Modifier.focusRequester(focusRequester),
-        inputField = {
-            SearchBarDefaults.InputField(
-                query = state.searchQuery,
-                onQueryChange = { component.changedSearchQuery(it) },
-                onSearch = { component.onSearchClick() },
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-                placeholder = { Text(text = stringResource(R.string.enter_city_name)) },
-                leadingIcon = {
-                    IconButton(onClick = { component.onBackClick() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                },
-                trailingIcon = {
-                    IconButton(onClick = { component.onSearchClick() }) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                        )
-                    }
-                },
-            )
-        },
-        expanded = expanded,
-        onExpandedChange = { component.onBackClick() },
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
-        when (val searchState = state.searchState) {
-            SearchStore.State.SearchState.EmptyResult -> {
-                Text(text = stringResource(R.string.nothing_found))
-            }
-
-            SearchStore.State.SearchState.Error -> {
-                Text(text = stringResource(R.string.error_search))
-            }
-
-            SearchStore.State.SearchState.Initial -> {
-            }
-
-            SearchStore.State.SearchState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.onBackground,
+        SearchBar(
+            modifier = Modifier.focusRequester(focusRequester),
+            inputField = {
+                SearchBarDefaults.InputField(
+                    query = state.searchQuery,
+                    onQueryChange = { component.changedSearchQuery(it) },
+                    onSearch = { component.onSearchClick() },
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                    placeholder = { Text(text = stringResource(R.string.enter_city_name)) },
+                    leadingIcon = {
+                        IconButton(onClick = { component.onBackClick() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { component.onSearchClick() }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                )
+            },
+            expanded = expanded,
+            onExpandedChange = { component.onBackClick() },
+        ) {
+            when (val searchState = state.searchState) {
+                SearchStore.State.SearchState.EmptyResult -> {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = stringResource(R.string.nothing_found),
+                        style =
+                            MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.error,
+                            ),
                     )
                 }
-            }
 
-            is SearchStore.State.SearchState.SuccessLoaded -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(16.dp),
-                ) {
-                    items(
-                        items = searchState.cities,
-                        key = { it.id },
-                    ) { city ->
-                        CityCard(
-                            city = city,
-                            onCityClick = { component.onCityClick(it) },
+                SearchStore.State.SearchState.Error -> {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = stringResource(R.string.error_search),
+                        style =
+                            MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.error,
+                            ),
+                    )
+                }
+
+                SearchStore.State.SearchState.Initial -> {
+                }
+
+                SearchStore.State.SearchState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = MaterialTheme.colorScheme.onBackground,
                         )
+                    }
+                }
+
+                is SearchStore.State.SearchState.SuccessLoaded -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        items(
+                            items = searchState.cities,
+                            key = { it.id },
+                        ) { city ->
+                            CityCard(
+                                city = city,
+                                onCityClick = { component.onCityClick(it) },
+                            )
+                        }
                     }
                 }
             }
