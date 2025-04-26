@@ -7,8 +7,4 @@ import androidx.room.PrimaryKey
 data class MetadataDbModel(
     @PrimaryKey val keyMetadata: String,
     val value: String,
-) {
-    companion object {
-        const val TIME_LAST_UPDATE_FORECAST_KEY = "last_update_forecast"
-    }
-}
+)

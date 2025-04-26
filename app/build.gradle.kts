@@ -107,10 +107,18 @@ dependencies {
     implementation(libs.androidx.splash)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk.test)
+    testImplementation(libs.robolectric.test)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine.test)
+    testImplementation(libs.work.test)
+    testImplementation(libs.logger.test)
+    testImplementation(libs.ktor.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(kotlin("test"))
 }
