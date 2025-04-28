@@ -1,8 +1,8 @@
 package com.grebnev.weatherapp.core.handlers
 
-import android.database.SQLException
 import com.grebnev.weatherapp.core.wrappers.ErrorType
 import java.io.IOException
+import java.sql.SQLException
 
 object ErrorHandler {
     const val RETRY_TIMEOUT = 3000L

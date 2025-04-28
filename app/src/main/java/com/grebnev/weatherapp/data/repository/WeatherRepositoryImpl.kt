@@ -2,6 +2,7 @@ package com.grebnev.weatherapp.data.repository
 
 import com.grebnev.weatherapp.core.handlers.ErrorHandler
 import com.grebnev.weatherapp.core.wrappers.ErrorType
+import com.grebnev.weatherapp.core.wrappers.OutdatedDataException
 import com.grebnev.weatherapp.core.wrappers.ResultStatus
 import com.grebnev.weatherapp.data.database.dao.ForecastDao
 import com.grebnev.weatherapp.data.database.dao.MetadataDao
@@ -52,12 +53,16 @@ class WeatherRepositoryImpl
             }
 
         override suspend fun getWeatherFromCache(cityId: Long): Weather =
-            forecastDao.getCurrentWeatherForCity(cityId).toWeather()
+            forecastDao.getCurrentWeatherForCity(cityId)?.toWeather()
+                ?: throw OutdatedDataException("The current weather is outdated")
 
         override suspend fun getForecastFromCache(cityId: Long): Forecast =
-            forecastDao.getForecastForCity(cityId).toForecast()
+            forecastDao.getForecastForCity(cityId)?.toForecast()
+                ?: throw OutdatedDataException("The forecast is outdated")
 
-        override suspend fun getTimeLastUpdateForecast(): Long = metadataDao.getTimeLastUpdateForecast()
+        override suspend fun getTimeLastUpdateForecast(): Long =
+            metadataDao.getTimeLastUpdateForecast()
+                ?: throw OutdatedDataException("The data has not been cached")
 
         companion object {
             private const val PREFIX_CITY_ID = "id:"
