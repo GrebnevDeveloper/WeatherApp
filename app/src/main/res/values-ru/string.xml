@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="add_favourite">Добавить в избранное</string>
+    <string name="search">Поиск</string>
+    <string name="upcoming">Прогноз</string>
+    <string name="enter_city_name">Введите название города</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="error_search">Произошла ошибка. Повторите запрос.</string>
+    <string name="data_from_memory">Проблема с загрузкой данных. Последнее обновление:</string>
+    <string name="retry">Повторить</string>
+    <string name="error_load_data">Ошибка загрузки данных</string>
+</resources>

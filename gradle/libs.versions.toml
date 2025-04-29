@@ -1,13 +1,33 @@
 [versions]
-agp = "8.7.3"
-kotlin = "2.0.0"
-coreKtx = "1.15.0"
+agp = "8.9.2"
+kotlin = "2.1.20"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.9.3"
-composeBom = "2024.04.01"
+activityCompose = "1.10.1"
+composeBom = "2025.04.01"
+mvikotlin = "4.3.0"
+decompose = "3.3.0"
+ksp = "2.1.20-1.0.32"
+room = "2.7.1"
+hilt = "2.56.1"
+serialization = "1.8.1"
+ktor = "3.1.2"
+glide = "1.0.0-beta01"
+ktlintPlugin = "12.2.0"
+ktlint = "1.5.0"
+detektPlugin = "1.23.8"
+worker = "2.10.1"
+timber = "5.0.1"
+splashScreen = "1.0.1"
+mockk = "1.13.17"
+robolectric = "4.14.1"
+coroutinesTest = "1.10.1"
+turbine = "1.2.0"
+logger = "1.7.36"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,9 +44,52 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+icons = { group = "androidx.compose.material", name = "material-icons-extended" }
+mvikotlin-core = { group = "com.arkivanov.mvikotlin", name = "mvikotlin", version.ref = "mvikotlin" }
+mvikotlin-main = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-main", version.ref = "mvikotlin" }
+mvikotlin-coroutines = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-extensions-coroutines", version.ref = "mvikotlin" }
+mvikotlin-logging = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-logging", version.ref = "mvikotlin" }
+decompose-core = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
+decompose-extensions = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
+decompose-android = { group = "com.arkivanov.decompose", name = "extensions-android", version.ref = "decompose" }
+room-core = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-coroutines = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
+hilt-test = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt"}
+ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-test = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide" }
+ktlint-rules = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
+work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "worker" }
+timber-log = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+androidx-splash = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
+mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockk"}
+robolectric-test = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric"}
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+turbine-test = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+work-test = { group = "androidx.work", name = "work-testing", version.ref = "worker"}
+logger-test = { group = "org.slf4j", name = "slf4j-simple", version.ref = "logger"}
+
+
+[bundles]
+mvikotlin = ["mvikotlin-core", "mvikotlin-main", "mvikotlin-logging", "mvikotlin-coroutines"]
+decompose = ["decompose-core", "decompose-extensions", "decompose-android"]
+ktor = ["ktor-core", "ktor-okhttp", "ktor-negotiation", "ktor-logging", "ktor-serialization", "serialization-json"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktlint-analisis = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
+detekt-analisis = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektPlugin" }
 
