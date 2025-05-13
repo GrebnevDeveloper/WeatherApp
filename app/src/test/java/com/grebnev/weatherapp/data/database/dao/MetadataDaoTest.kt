@@ -35,10 +35,11 @@ class MetadataDaoTest {
     }
 
     @Test
-    fun `getTimeLastUpdateForecast should return null when no value exists`() {
-        val result = dao.getTimeLastUpdateForecast()
-        assertNull(result)
-    }
+    fun `getTimeLastUpdateForecast should return null when no value exists`() =
+        runTest {
+            val result = dao.getTimeLastUpdateForecast()
+            assertNull(result)
+        }
 
     @Test
     fun `getTimeLastUpdateForecast should return valid timestamp when exists`() =
