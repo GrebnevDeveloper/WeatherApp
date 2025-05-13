@@ -11,13 +11,13 @@ import timber.log.Timber
 abstract class MetadataDao {
     @Suppress("ktlint:standard:function-naming")
     @Query("SELECT value FROM metadata WHERE keyMetadata = :timeLastUpdateKey")
-    protected abstract fun _getTimeLastUpdateForecast(timeLastUpdateKey: String): String?
+    protected abstract suspend fun _getTimeLastUpdateForecast(timeLastUpdateKey: String): String?
 
     @Suppress("ktlint:standard:function-naming")
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun _updateTimeLastUpdateForecast(timeLastUpdate: MetadataDbModel)
 
-    fun getTimeLastUpdateForecast(): Long? =
+    suspend fun getTimeLastUpdateForecast(): Long? =
         try {
             _getTimeLastUpdateForecast(TIME_LAST_UPDATE_FORECAST_KEY)?.toLong()
         } catch (exception: NumberFormatException) {
