@@ -10,10 +10,10 @@ import com.grebnev.weatherapp.data.database.model.WeatherDbModel
 @Dao
 interface ForecastDao {
     @Query("SELECT * FROM forecast WHERE cityId = :cityId LIMIT 1")
-    fun getForecastForCity(cityId: Long): ForecastDbModel?
+    suspend fun getForecastForCity(cityId: Long): ForecastDbModel?
 
     @Query("SELECT currentWeather FROM forecast WHERE cityId = :cityId LIMIT 1")
-    fun getCurrentWeatherForCity(cityId: Long): WeatherDbModel?
+    suspend fun getCurrentWeatherForCity(cityId: Long): WeatherDbModel?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateForecastForCity(forecast: ForecastDbModel)

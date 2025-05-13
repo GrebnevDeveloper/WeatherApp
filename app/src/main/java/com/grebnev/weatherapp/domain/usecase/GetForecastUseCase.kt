@@ -4,9 +4,7 @@ import com.grebnev.weatherapp.core.wrappers.OutdatedDataException
 import com.grebnev.weatherapp.core.wrappers.ResultStatus
 import com.grebnev.weatherapp.domain.repository.WeatherRepository
 import com.grebnev.weatherapp.domain.utils.RelevantDataChecker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GetForecastUseCase
@@ -19,14 +17,9 @@ class GetForecastUseCase
                 if (result is ResultStatus.Success) {
                     result.data
                 } else {
-                    val timeLastUpdate =
-                        withContext(Dispatchers.IO) {
-                            repository.getTimeLastUpdateForecast()
-                        }
+                    val timeLastUpdate = repository.getTimeLastUpdateForecast()
                     if (RelevantDataChecker.isWeatherRelevant(timeLastUpdate)) {
-                        withContext(Dispatchers.IO) {
-                            repository.getForecastFromCache(cityId).copy(isDataFromCache = true)
-                        }
+                        repository.getForecastFromCache(cityId).copy(isDataFromCache = true)
                     } else {
                         throw OutdatedDataException("The forecast is outdated")
                     }

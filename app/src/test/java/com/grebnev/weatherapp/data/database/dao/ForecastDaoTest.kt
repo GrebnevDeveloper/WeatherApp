@@ -43,16 +43,18 @@ class ForecastDaoTest {
     }
 
     @Test
-    fun `getForecastForCity should return null when no forecast exists`() {
-        val result = forecastDao.getForecastForCity(1)
-        assertNull(result)
-    }
+    fun `getForecastForCity should return null when no forecast exists`() =
+        runTest {
+            val result = forecastDao.getForecastForCity(1)
+            assertNull(result)
+        }
 
     @Test
-    fun `getCurrentWeatherForCity should return null when no forecast exists`() {
-        val result = forecastDao.getCurrentWeatherForCity(1)
-        assertNull(result)
-    }
+    fun `getCurrentWeatherForCity should return null when no forecast exists`() =
+        runTest {
+            val result = forecastDao.getCurrentWeatherForCity(1)
+            assertNull(result)
+        }
 
     @Test
     fun `updateForecastForCity should insert new forecast`() =
